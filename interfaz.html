@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo de Aspersor Automático 2D - v0.3</title>
+    <link rel="stylesheet" href="Control.css">
+</head>
+<body>
+    <header>
+        <h1>Simulador de Aspersor Industrial de Alta Precisión (Vista 2D)</h1>
+    </header>
+
+    <main>
+        <div id="renderer-container">
+            <canvas id="sprinkler-canvas"></canvas>
+        </div>
+        <div id="control-panel">
+            <h2>Panel de Control</h2>
+            <div class="control-group">
+                <label for="seed-selector">Tipo de Cultivo:</label>
+                <select id="seed-selector">
+                    <option value="arroz">Arroz</option>
+                    <option value="papa">Papa</option>
+                    <option value="fresa">Fresa</option>
+                    <option value="maiz">Maíz</option>
+                    <option value="tomate">Tomate</option>
+                    <option value="lechuga">Lechuga</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="season-selector">Estación:</label>
+                <select id="season-selector">
+                    <option value="primavera">Primavera</option>
+                    <option value="verano">Verano</option>
+                    <option value="otono">Otoño</option>
+                    <option value="invierno">Invierno</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="start-angle-slider">Ángulo de Inicio (°): <span id="start-angle-value">0</span></label>
+                <input type="range" id="start-angle-slider" min="0" max="360" value="0">
+            </div>
+            <div class="control-group">
+                <label for="end-angle-slider">Ángulo de Fin (°): <span id="end-angle-value">90</span></label>
+                <input type="range" id="end-angle-slider" min="0" max="360" value="90">
+            </div>
+            <div class="button-group">
+                <button id="start-button">Iniciar Ciclo</button>
+                <button id="stop-button">Parar Ciclo</button>
+                <button id="reset-button" class="reset-button">Reiniciar</button>
+            </div>
+            <div id="status-display">
+                <h3>Estado del Sistema</h3>
+                <p><strong>Cultivo:</strong> <span id="status-seed">Ninguno</span></p>
+                <p><strong>Ciclo Actual:</strong> <span id="status-mode">Detenido</span></p>
+                <p><strong>Siguiente Etapa en:</strong> <span id="status-timer">N/A</span></p>
+                <p><strong>Ángulo Actual:</strong> <span id="status-angle">0.0°</span></p>
+                <hr>
+                <p><strong>Presión del Agua:</strong> <span id="status-pressure">0 kPa</span></p>
+                <p><strong>Humedad del Suelo:</strong> <span id="status-humidity">0%</span></p>
+                <p><strong>Consumo Energético:</strong> <span id="status-energy">0 W</span></p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Unidad de Control e Inteligencia - Prototipo v0.3 (2D)</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
