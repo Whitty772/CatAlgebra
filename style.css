@@ -1,0 +1,965 @@
+/*
+ * Configuración Base y Fuente
+ */
+:root {
+    --color-sea-blue: #00FFFF; /* Cian puro, más brillante */
+    --color-dark-storm: #010414;
+    --color-text-light: #f0f8ff;
+    --color-correct: #00ff00; /* Verde neón */
+    --color-incorrect: #ff4500; /* Naranja rojizo */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* * BODY: Solo fondo y contenedor de la vista */
+body {
+    background-color: var(--color-dark-storm);
+    background-image: linear-gradient(to bottom, #00040D, #001F3F);
+    color: var(--color-text-light);
+    min-height: 100vh;
+    text-align: center;
+    overflow: hidden;
+    transition: background-color 0.5s ease;
+}
+
+/* --- ESTILOS DE CANVAS --- */
+#rain-canvas, #foreground-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#rain-canvas { z-index: 0; }
+#foreground-canvas { z-index: 2; }
+
+/* --- CONTENEDORES PRINCIPALES --- */
+#welcome-container, #difficulty-screen, #quiz-game-screen, #game-over-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+    z-index: 10; /* Z-index alto para que esté sobre los canvas */
+}
+
+#project-title {
+    margin-bottom: 40px;
+}
+
+/* --- TÍTULOS Y TEXTO --- */
+#project-title h1 {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    letter-spacing: 0.5rem;
+    color: var(--color-text-light);
+    text-shadow:
+        0 0 25px rgba(0, 255, 255, 0.7),
+        0 0 60px rgba(0, 255, 255, 0.4),
+        1px 1px 0px #00aaff,
+        2px 2px 0px #00aaff,
+        3px 3px 0px #0088cc,
+        4px 4px 0px #0088cc,
+        5px 5px 15px rgba(0,0,0,0.5);
+    /* animation: textGlow 2s ease-in-out infinite alternate, float 8s ease-in-out infinite; */
+}
+
+#project-title h2 {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: var(--color-text-light);
+    text-shadow:
+        1px 1px 0px #00aaff,
+        2px 2px 0px #0088cc,
+        3px 3px 8px rgba(0,0,0,0.5);
+    /* animation: float-slower 10s ease-in-out infinite; */
+}
+
+/* Botón realista (usado en Start y Restart) */
+.realistic-button {
+    background: linear-gradient(45deg, #00ffff, #00aaff);
+    border: none;
+    color: #ffffff;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+    box-shadow:
+        inset 0 -5px 10px rgba(0, 170, 255, 0.7),
+        0 5px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 255, 255, 0.5);
+    /* animation: float 4s ease-in-out infinite; */
+}
+
+.realistic-button:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow:
+        inset 0 -5px 10px rgba(0, 170, 255, 0.7),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(0, 255, 255, 0.8);
+}
+
+/* --- CLASES DE UTILIDAD Y ANIMACIONES --- */
+.hidden { display: none !important; }
+.fade-out { animation: fadeOutAnimation 0.5s ease-out forwards; }
+.fade-in { animation: fadeInAnimation 0.5s ease-in forwards; }
+
+@keyframes fadeOutAnimation {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes fadeInAnimation {
+    from { opacity: 0; visibility: hidden; }
+    to { opacity: 1; visibility: visible; }
+}
+
+/* --- PANTALLA DE DIFICULTAD --- */
+#difficulty-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.difficulty-btn {
+    background: #010414;
+    border: 3px solid;
+    border-image-slice: 1;
+    padding: 20px 40px;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transition: all 0.3s ease;
+    min-width: 250px;
+    text-shadow: 0 0 5px #fff, 0 0 10px currentColor;
+    border-radius: 0px;
+}
+
+/* COLORES Y BORDES ESPECÍFICOS */
+#btn-easy {
+    border-image-source: linear-gradient(to right, #00FFED, #00BFFF);
+    box-shadow: 0 0 20px -5px #00FFED, 0 0 20px -5px #00BFFF;
+    /* animation: float 6s ease-in-out infinite; */
+}
+
+#btn-medium {
+    border-image-source: linear-gradient(to right, #FFD700, #FFA500);
+    box-shadow: 0 0 20px -5px #FFD700, 0 0 20px -5px #FFA500;
+    /* animation: float 6s ease-in-out infinite 0.2s; */
+}
+
+#btn-hard {
+    border-image-source: linear-gradient(to right, #FF00FF, #8A2BE2);
+    box-shadow: 0 0 20px -5px #FF00FF, 0 0 20px -5px #8A2BE2;
+    /* animation: float 6s ease-in-out infinite 0.4s; */
+}
+
+#btn-very-hard {
+    border-image-source: linear-gradient(to right, white, white);
+    /* animation: float 6s ease-in-out infinite 0.6s; */
+}
+
+/* EFECTOS HOVER */
+.difficulty-btn:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 10px #fff, 0 0 20px currentColor, 0 0 30px currentColor;
+}
+
+#btn-easy:hover {
+    box-shadow: 0 0 30px -5px #00FFED, 0 0 40px -5px #00BFFF;
+}
+
+#btn-medium:hover {
+    box-shadow: 0 0 30px -5px #FFD700, 0 0 40px -5px #FFA500;
+}
+
+#btn-hard:hover {
+    box-shadow: 0 0 30px -5px #FF00FF, 0 0 40px -5px #8A2BE2;
+}
+
+#btn-very-hard:hover {
+    border-image-source: linear-gradient(to right, #FF00FF, #8A2BE2);
+    box-shadow: 0 0 30px -5px #FF00FF, 0 0 40px -5px #8A2BE2;
+}
+
+/* FONDOS DINÁMICOS HOVER */
+body.medium-hover-bg { background: #332a00; }
+body.hard-hover-bg { background: #220000; }
+body.very-hard-hover-bg { background: #2a0033; }
+
+/* --- MENSAJE DE JUEGO/CONFIRMACIÓN (Fixed) --- */
+#confirmation-message {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    left: 40px;
+    bottom: 40px;
+    z-index: 10;
+    color: #FF4D4D; /* Rojo neón */
+    font-size: 1.2rem;
+    text-shadow: 0 0 8px #FF0000, 0 0 15px #FF0000;
+    max-width: 200px;
+    text-align: left;
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #FF4D4D;
+}
+
+#confirmation-message.visible {
+    display: block; /* Visible cuando tiene la clase */
+}
+
+/* --- ESTILOS DE LA SECUENCIA DE INTRODUCCIÓN --- */
+#intro-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 1.5s ease-out;
+}
+
+#intro-text {
+    font-size: clamp(3rem, 15vw, 7rem);
+    font-weight: bold;
+    color: #cccccc; /* Gris claro */
+    text-shadow:
+        0 0 5px #ffffff,
+        0 0 15px #ffffff,
+        0 0 30px #afeeee, /* Turquesa pálido */
+        0 0 50px #afeeee;
+    opacity: 0;
+    visibility: hidden;
+    position: relative;
+    transition: opacity 1.5s ease-in, visibility 1.5s;
+}
+
+#intro-text.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- AÑADIDO: ESTILOS DEL QUIZ Y JUEGO --- */
+
+#quiz-game-screen {
+    padding-top: 50px;
+}
+
+#quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 10px 0;
+    border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+}
+
+#current-difficulty {
+    font-size: 1.2rem;
+    color: var(--color-sea-blue);
+    text-shadow: 0 0 10px var(--color-sea-blue);
+}
+
+/* Estilos del Temporizador */
+#timer-container {
+    flex-grow: 1; /* Ayuda a que el temporizador ocupe el espacio central */
+}
+
+#timer {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--color-text-light);
+    text-shadow:
+        -1.5px -1.5px 0 rgba(0, 0, 0, 0.7),
+        1.5px -1.5px 0 rgba(0, 0, 0, 0.7),
+        -1.5px 1.5px 0 rgba(0, 0, 0, 0.7),
+        1.5px 1.5px 0 rgba(0, 0, 0, 0.7),
+        0 0 15px rgba(255, 255, 255, 0.4); /* Brillo sutil */
+    /* animation: float 7s ease-in-out infinite; */
+}
+
+#timer.timer-warning {
+    color: var(--color-incorrect);
+    text-shadow:
+        -1.5px -1.5px 0 rgba(0, 0, 0, 0.7),
+        1.5px -1.5px 0 rgba(0, 0, 0, 0.7),
+        -1.5px 1.5px 0 rgba(0, 0, 0, 0.7),
+        1.5px 1.5px 0 rgba(0, 0, 0, 0.7),
+        0 0 10px #ff0000,
+        0 0 25px #ff0000;
+    /* animation: textFlicker 1.5s infinite alternate, float 7s ease-in-out infinite; */ /* Combina animaciones */
+}
+
+/* Barra de Salud */
+#health-bar {
+    display: flex;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.health-block {
+    width: 25px;
+    height: 20px;
+    background-color: var(--color-correct);
+    border: 1px solid rgba(0, 255, 255, 0.8);
+    box-shadow: 0 0 8px var(--color-correct);
+    transition: all 0.5s ease;
+}
+
+.health-block.lost {
+    background-color: var(--color-dark-storm);
+    box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.8);
+    border-color: #ff0000;
+}
+
+/* Contenedor de Pregunta */
+#question-container {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid var(--color-sea-blue);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    margin-bottom: 40px;
+    /* animation: float-slower 12s ease-in-out infinite; */
+}
+
+#question-text {
+    font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+    margin-bottom: 30px;
+    color: #fff;
+    font-weight: 400;
+}
+
+/* Opciones de Respuesta */
+#answer-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.answer-btn {
+    background: #111;
+    border: 2px solid var(--color-sea-blue);
+    color: var(--color-text-light);
+    padding: 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    min-height: 80px;
+    /* animation: float 5s ease-in-out infinite; */
+}
+
+.answer-btn:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.answer-btn:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.answer-btn:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.answer-btn:hover:not(:disabled) {
+    background: rgba(0, 255, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px var(--color-sea-blue);
+}
+
+.answer-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Feedback de Respuesta */
+.answer-btn.correct {
+    background: var(--color-correct);
+    color: #000;
+    font-weight: bold;
+    border-color: var(--color-correct);
+    box-shadow: 0 0 20px var(--color-correct);
+    animation: correctFlash 0.3s 3;
+}
+
+.answer-btn.incorrect {
+    background: var(--color-incorrect);
+    color: #fff;
+    border-color: var(--color-incorrect);
+    box-shadow: 0 0 20px var(--color-incorrect);
+    animation: incorrectShake 0.1s 3;
+}
+
+@keyframes correctFlash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes incorrectShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* --- PANTALLA DE GAME OVER --- */
+#game-over-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-over-title {
+    font-size: clamp(3rem, 10vw, 5rem);
+    color: #ff0000;
+    text-shadow:
+        0 0 10px #ff0000,
+        0 0 30px #ff0000,
+        0 0 60px #800000;
+    margin-bottom: 20px;
+    animation: textFlicker 1s infinite alternate;
+}
+
+@keyframes textFlicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; text-shadow: 0 0 15px #ff0000, 0 0 40px #ff0000; }
+}
+
+#game-over-text {
+    font-size: 1.5rem;
+    color: #aaa;
+    margin-bottom: 40px;
+}
+
+#restart-btn {
+    /* Utiliza la clase .realistic-button */
+    background: linear-gradient(45deg, #FF4500, #FF0000);
+    box-shadow:
+        inset 0 -5px 10px rgba(255, 0, 0, 0.7),
+        0 5px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(255, 69, 0, 0.5);
+}
+
+#restart-btn:hover {
+    box-shadow:
+        inset 0 -5px 10px rgba(255, 0, 0, 0.7),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(255, 69, 0, 0.8);
+}
+
+
+/* --- TEMAS DE COLOR POR DIFICULTAD --- */
+
+/* TEMA FÁCIL (Cian) */
+.theme-easy #question-container,
+.theme-easy .answer-btn {
+    border-color: #00BFFF; /* Un cian consistente */
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+}
+
+.theme-easy #current-difficulty {
+    color: #00BFFF;
+    text-shadow: 0 0 10px #00BFFF;
+}
+
+.theme-easy .answer-btn:hover:not(:disabled) {
+    background: rgba(0, 191, 255, 0.1);
+    box-shadow: 0 0 15px #00BFFF;
+}
+
+/* TEMA MEDIO (Amarillo) */
+.theme-medium #question-container,
+.theme-medium .answer-btn {
+    border-color: #FFD700; /* Dorado */
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.theme-medium #current-difficulty {
+    color: #FFD700;
+    text-shadow: 0 0 10px #FFD700;
+}
+
+.theme-medium .answer-btn:hover:not(:disabled) {
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 15px #FFD700;
+}
+
+/* TEMA DIFÍCIL (Rojo/Magenta) */
+.theme-hard #question-container,
+.theme-hard .answer-btn {
+    border-color: #FF00FF; /* Magenta */
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+.theme-hard #current-difficulty {
+    color: #FF00FF;
+    text-shadow: 0 0 10px #FF00FF;
+}
+
+.theme-hard .answer-btn:hover:not(:disabled) {
+    background: rgba(255, 0, 255, 0.1);
+    box-shadow: 0 0 15px #FF00FF;
+}
+
+/* TEMA EXTREMO (Púrpura) */
+.theme-extreme #question-container,
+.theme-extreme .answer-btn {
+    border-color: #8A2BE2; /* Púrpura */
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+}
+
+.theme-extreme #current-difficulty {
+    color: #8A2BE2;
+    text-shadow: 0 0 10px #8A2BE2;
+}
+
+.theme-extreme .answer-btn:hover:not(:disabled) {
+    background: rgba(138, 43, 226, 0.1);
+    box-shadow: 0 0 15px #8A2BE2;
+}
+
+
+/* --- Media Queries para Responsive Design --- */
+@media (max-width: 768px) {
+    #project-title h1 {
+        font-size: 3rem;
+        letter-spacing: 0.3rem;
+    }
+
+    #project-title h2 {
+        font-size: 1.2rem;
+    }
+
+    #difficulty-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .difficulty-btn {
+        min-width: 90%;
+        padding: 15px 20px;
+    }
+
+    #answer-options {
+        grid-template-columns: 1fr; /* Una columna en móvil */
+    }
+
+    .answer-btn {
+        padding: 10px;
+    }
+
+    #confirmation-message {
+        left: 20px;
+        bottom: 20px;
+        font-size: 1rem;
+    }
+}
+
+/* Animación de Flotación Mejorada */
+@keyframes float {
+    0% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-8px) translateX(2px) rotate(-0.5deg);
+    }
+    50% {
+        transform: translateY(-4px) translateX(-2px) rotate(0.5deg);
+    }
+    75% {
+        transform: translateY(-2px) translateX(1px) rotate(-0.2deg);
+    }
+    100% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+}
+
+/* Animación de Flotación Más Lenta y Sutil */
+@keyframes float-slower {
+    0% {
+        transform: translateY(0px) translateX(0px);
+    }
+    50% {
+        transform: translateY(-6px) translateX(-3px);
+    }
+    100% {
+        transform: translateY(0px) translateX(0px);
+    }
+}
+
+@keyframes float-center {
+    0% {
+        transform: translate(-50%, -50%);
+    }
+    50% {
+        transform: translate(-50%, calc(-50% - 10px));
+    }
+    100% {
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* --- TEMAS DE COLOR DE FONDO POR DIFICULTAD --- */
+body.bg-easy {
+    background-color: #3d3d3d;
+    background-image: linear-gradient(to bottom, #2c2c2c, #5a5a5a);
+}
+
+body.bg-medium {
+    background-color: #4d4000;
+    background-image: linear-gradient(to bottom, #332a00, #806500);
+}
+
+body.bg-hard {
+    background-color: #4d0000;
+    background-image: linear-gradient(to bottom, #220000, #8b0000);
+}
+
+body.bg-extreme {
+    background-color: #2a0033;
+    background-image: linear-gradient(to bottom, #1a0020, #4c005a);
+}
+
+/* --- Screen Float Effect --- */
+body.screen-float {
+    animation: screen-float-animation 0.8s ease-in-out;
+}
+
+@keyframes screen-float-animation {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(-3px, 2px) scale(1.02);
+    }
+    50% {
+        transform: translate(3px, -2px) scale(1.02);
+    }
+    75% {
+        transform: translate(-2px, 1px) scale(1.01);
+    }
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+/* --- ESTILOS DEL MINIJUEGO DE ESQUIVAR --- */
+#dodge-minigame-container {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    height: 100px;
+    border-bottom: 3px solid var(--color-sea-blue);
+    box-shadow: 0 5px 15px -5px var(--color-sea-blue);
+}
+
+#player-character, #attacker-character {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+    /* Transición suave para el cambio de carril */
+    transition: bottom 0.1s ease-out;
+}
+
+#player-character {
+    left: 20px;
+    background-color: var(--color-correct);
+    box-shadow: 0 0 15px var(--color-correct);
+}
+
+#attacker-character {
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-incorrect);
+    box-shadow: 0 0 15px var(--color-incorrect);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* --- NUEVAS CLASES DE CARRIL --- */
+.lane-bottom {
+    bottom: 5px; /* Ligeramente elevado del borde */
+}
+
+.lane-top {
+    bottom: 55px; /* Altura del carril superior */
+}
+
+#attacker-character.shooting {
+    animation: attacker-shoot-effect 0.2s;
+}
+
+#attacker-character .eye {
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    box-shadow: 0 0 10px white;
+}
+
+#projectile {
+    position: absolute;
+    /* La posición 'bottom' será gestionada por las clases de carril */
+    right: 70px; /* Inicia desde el atacante */
+    width: 20px;
+    height: 20px;
+    background-color: #ff00ff;
+    border: 1px solid white;
+    box-shadow: 0 0 15px #ff00ff;
+    visibility: hidden; /* Oculto hasta que se dispara */
+    opacity: 0;
+}
+
+#projectile.firing {
+    visibility: visible;
+    animation: fire-projectile 0.5s linear;
+}
+
+#warning-sign {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-left: 100px solid transparent;
+    border-right: 100px solid transparent;
+    border-bottom: 173.2px solid #ff0000; /* Altura para un triángulo equilátero */
+    filter: drop-shadow(0 0 10px #ff0000) drop-shadow(0 0 25px #ff0000);
+    z-index: 100;
+}
+
+#warning-sign::after {
+    content: '!';
+    position: absolute;
+    top: 55px; /* Ajuste manual para centrar */
+    left: -15px; /* Ajuste manual para centrar */
+    font-size: 90px;
+    font-weight: bold;
+    color: #010414; /* Color del fondo para efecto de recorte */
+    text-shadow: none; /* Sin sombra para el recorte */
+}
+
+#bullet-count {
+    position: absolute;
+    bottom: -220px; /* Posicionado debajo del triángulo */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 80px;
+    font-weight: bold;
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000, 0 0 30px #ff0000, 0 0 50px #ff0000;
+}
+
+/* --- BOTONES DE PRUEBA --- */
+#minigame-test-buttons {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+}
+
+#minigame-test-buttons button {
+    background: #333;
+    color: white;
+    border: 1px solid white;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* --- ANIMACIONES DEL MINIJUEGO --- */
+@keyframes fire-projectile {
+    from {
+        right: 70px; /* Inicia desde el atacante */
+        opacity: 1;
+    }
+    to {
+        right: 100%; /* Atraviesa toda la pantalla */
+        opacity: 1;
+    }
+}
+
+/* Animación para 3 parpadeos en 1 segundo */
+@keyframes fast-blink {
+    0%, 33%, 66%, 100% { opacity: 1; }
+    16%, 50%, 83% { opacity: 0.3; }
+}
+
+.fast-blinking {
+    animation: fast-blink 1s linear;
+}
+
+@keyframes attacker-shoot-effect {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); box-shadow: 0 0 30px var(--color-incorrect); }
+}
+
+/* --- ANIMACIONES DE FALLO (NUEVO) --- */
+@keyframes screen-shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+    20%, 40%, 60%, 80% { transform: translateX(8px); }
+}
+
+@keyframes player-flicker {
+    0%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.2; }
+    50% { opacity: 0.7; }
+}
+
+.screen-shake-effect {
+    animation: screen-shake 0.3s linear;
+}
+
+.player-flicker-effect {
+    animation: player-flicker 0.5s linear;
+}
+
+/* --- ESTILOS DEL OVERLAY DE TRANSICIÓN Y PANTALLA DE INSTRUCCIONES --- */
+
+#transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 199; /* Justo debajo de la intro, pero encima de todo lo demás */
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+#transition-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+#instructions-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    padding: 40px;
+    z-index: 10;
+    text-align: center;
+    background: rgba(0, 15, 30, 0.8);
+    border: 2px solid var(--color-sea-blue);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+}
+
+.instructions-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    color: var(--color-sea-blue);
+    text-shadow: 0 0 15px var(--color-sea-blue);
+    margin-bottom: 40px;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.instruction-item p .key-name,
+.instruction-item p .symbol-name,
+.instruction-item p .highlight {
+    font-weight: 700;
+    color: #00ffff; /* Cian brillante */
+    text-shadow: 0 0 5px #00ffff;
+}
+
+.instruction-item .spacebar {
+    border: 2px solid #fff;
+    border-radius: 8px;
+    width: 180px;
+    height: 40px;
+    margin: 0 auto 10px;
+    box-shadow: 0 0 10px #fff;
+}
+
+.instructions-tip {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: rgba(0, 255, 255, 0.1);
+    border: 1px solid #00ffff;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.instructions-tip p .highlight {
+    color: #ff4d4d; /* Rojo para la advertencia */
+    text-shadow: 0 0 5px #ff4d4d;
+}
+
+.instruction-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.instruction-item p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--color-text-light);
+}
+
+.instruction-symbol {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px #fff, 0 0 20px var(--color-sea-blue);
+    padding: 10px;
+    border: 2px solid var(--color-sea-blue);
+    border-radius: 5px;
+    min-width: 80px;
+}
+
+#start-transmission-btn {
+    margin-top: 20px;
+}
